@@ -1,7 +1,5 @@
-/* Modern animations and effects */
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600&display=swap');
 
-/* Root variables for consistent theming */
 :root {
     --primary-color: #007bff;
     --secondary-color: #6c757d;
@@ -13,10 +11,13 @@
     --light-color: #f8f9fa;
     --intellij-blue: #4A90E2;
     --intellij-purple: #6F42C1;
+    --intellij-orange: #FF6B35;
+    --intellij-green: #98D8C8;
     --shadow-color: rgba(0, 0, 0, 0.1);
+    --glass-bg: rgba(255, 255, 255, 0.9);
+    --glass-border: rgba(255, 255, 255, 0.2);
 }
 
-/* Body with animated background */
 body {
     font-family: 'JetBrains Mono', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background: linear-gradient(-45deg, #f8f9fa, #e9ecef, #dee2e6, #ced4da);
@@ -33,7 +34,6 @@ body {
     100% { background-position: 0% 50%; }
 }
 
-/* Floating particles background */
 .particles {
     position: absolute;
     top: 0;
@@ -71,7 +71,6 @@ body {
     75% { transform: translateY(-30px) rotate(270deg); }
 }
 
-/* Navigation with glass effect */
 .navbar {
     backdrop-filter: blur(20px);
     background: rgba(33, 37, 41, 0.9) !important;
@@ -111,7 +110,6 @@ body {
     width: 80%;
 }
 
-/* Hero section with enhanced animations */
 .hero-section {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
@@ -179,7 +177,6 @@ body {
     }
 }
 
-/* Enhanced feature cards with 3D effects */
 .feature-card {
     border: none;
     background: rgba(255, 255, 255, 0.9);
@@ -224,7 +221,6 @@ body {
     text-shadow: 0 0 20px currentColor;
 }
 
-/* Stats section with counter animations */
 .stats-section {
     background: rgba(248, 249, 250, 0.9);
     backdrop-filter: blur(20px);
@@ -266,7 +262,6 @@ body {
     filter: drop-shadow(0 0 10px currentColor);
 }
 
-/* Animated buttons with ripple effect */
 .btn {
     border-radius: 50px;
     font-weight: 500;
@@ -300,7 +295,6 @@ body {
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
 }
 
-/* Step indicators with pulse animation */
 .step-indicator {
     position: relative;
     animation: pulse 2s infinite;
@@ -335,7 +329,6 @@ body {
     }
 }
 
-/* Footer with gradient animation */
 .footer {
     background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
     color: #ecf0f1;
@@ -426,7 +419,6 @@ body {
     font-size: 1.2em;
 }
 
-/* Footer bottom section */
 .footer .row:last-child {
     margin-top: 20px;
 }
@@ -437,7 +429,6 @@ body {
     margin-bottom: 0;
 }
 
-/* Add some spacing and visual improvements */
 .footer .col-md-6:first-child {
     border-right: 1px solid rgba(255, 255, 255, 0.1);
     padding-right: 30px;
@@ -447,7 +438,6 @@ body {
     padding-left: 30px;
 }
 
-/* Responsive footer */
 @media (max-width: 768px) {
     .footer .col-md-6:first-child {
         border-right: none;
@@ -477,7 +467,6 @@ body {
     }
 }
 
-/* Scroll animations */
 .scroll-animation {
     opacity: 0;
     transform: translateY(30px);
@@ -489,7 +478,6 @@ body {
     transform: translateY(0);
 }
 
-/* Loading animations */
 .loading-dots {
     display: inline-block;
 }
@@ -505,7 +493,6 @@ body {
     67%, 100% { content: '..'; }
 }
 
-/* Responsive enhancements */
 @media (max-width: 768px) {
     .hero-section {
         padding: 60px 0;
@@ -533,7 +520,6 @@ body {
     }
 }
 
-/* Add performance optimizations */
 .hero-section,
 .stats-section {
     will-change: transform;
@@ -544,19 +530,16 @@ body {
     will-change: transform, box-shadow;
 }
 
-/* Smooth scrolling */
 html {
     scroll-behavior: smooth;
 }
 
-/* Focus styles for accessibility */
 .btn:focus,
 .nav-link:focus {
     outline: 2px solid var(--intellij-blue);
     outline-offset: 2px;
 }
 
-/* Custom scrollbar */
 ::-webkit-scrollbar {
     width: 8px;
 }

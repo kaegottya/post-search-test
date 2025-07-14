@@ -9,7 +9,7 @@ $(document).ready(function() {
         console.log('✅ Home page initialization complete');
     }
 
-    // Load postbox count statistics from API
+    // Načtení statistiky pro home page (počet poštovních schránek)
     function loadStatistics() {
         console.log('📊 Loading statistics...');
 

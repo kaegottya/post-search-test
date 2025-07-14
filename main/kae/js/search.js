@@ -1,25 +1,25 @@
+// JS pro search funkcionalitu. Tady jsem si tady od claude nechal dost poradit, předtím jsem dělal hlavně discord.js (kde to je hodně jinak a bylo to hlavně spojený s Discordem, takže tam to prostě bylo úplně jinak.
+// Důvod, proč se sem rozepisuju je ten, že je prakticky úplně jedno, jestli to sem napíšu nebo ne a raději budu upřímný v tom, k čemu všemu jsem využívál LLM, protože stejně půjde poznat, co přesně jsem dělal "ručně" já a co ne.)
+// Šlo mi hlavně o to, udělat to co nejlépe, správně nastavit sqlko (což mi zabralo asi hodinu a půl protože se můj počítač po poslední zkušenosti s postgresql dost cukal) a udělat i kvalitní UI. co půjde řádně podchytit)
+// Příjemný čtení přeji :)
 $(document).ready(function() {
     console.log('🔍 Search module loaded');
 
-    // Search-specific variables
     let currentResults = [];
     let currentPage = 1;
     let totalPages = 1;
     let isLoading = false;
 
-    // Initialize search functionality
     initializeSearch();
 
     function initializeSearch() {
         console.log('🔧 Initializing search functionality');
 
-        // Validate required elements
+        // Kontrola, zda-li všechno funguje jak má
         if (!validateSearchElements()) {
             console.error('❌ Required search elements not found!');
             return;
         }
-
-        // Event listeners
         setupSearchEventListeners();
 
         console.log('✅ Search initialization complete');
@@ -46,17 +46,16 @@ $(document).ready(function() {
     }
 
     function setupSearchEventListeners() {
-        // Search button click
+        // Search button kliknutí
         $('#mainSearchBtn').click(performSearch);
 
-        // Enter key in search input
         $('#mainSearchInput').keypress(function(e) {
             if (e.which === 13) {
                 performSearch();
             }
         });
 
-        // Search options change
+        // Změna search options
         $('#searchType, #perPage').change(function() {
             const searchTerm = $('#mainSearchInput').val().trim();
             if (searchTerm) {
@@ -64,10 +63,9 @@ $(document).ready(function() {
             }
         });
 
-        // Clear results
+        // Výmaz parametrů
         $('#clearResults').click(clearResults);
 
-        // Pagination
         $(document).on('click', '.page-link', function(e) {
             e.preventDefault();
             const page = parseInt($(this).data('page'));
@@ -77,11 +75,11 @@ $(document).ready(function() {
             }
         });
 
-        // Export buttons (removed whole database export)
+        // Exportování .csv souboru
         $('#exportCurrentPage').click(() => exportCurrentPage(currentResults, currentPage));
-        $('#exportAllResults').click(() => exportAllResults());
+        $('#exportAllResults').click(() => exportAllResults()); // exportování 100 výsledků
 
-        // Keyboard shortcuts
+        // Shortcuts
         $(document).on('keydown', function(e) {
             if (e.ctrlKey && e.key === 'f') {
                 e.preventDefault();
@@ -99,22 +97,21 @@ $(document).ready(function() {
             return;
         }
 
-        // Get search parameters
+        // Získání parametrů
         const searchTerm = $('#mainSearchInput').val().trim();
         const searchType = $('#searchType').val() || 'all';
         const perPage = parseInt($('#perPage').val()) || 25;
 
-        // Validate
+        // Validace
         if (!searchTerm) {
             showAlert('Zadejte prosím hledaný výraz', 'warning');
             return;
         }
 
-        // Set loading state
         isLoading = true;
         setLoadingState(true);
 
-        // Make request
+        // Vytvoření requestu
         const requestData = {
             search: searchTerm,
             searchType: searchType,
@@ -166,6 +163,7 @@ $(document).ready(function() {
         showEmptyState();
     }
 
+    // Render search výsledků pro zobrazení
     function displayResults(response) {
         const tbody = $('#resultsTable tbody');
         tbody.empty();
@@ -201,6 +199,8 @@ $(document).ready(function() {
         hideEmptyState();
     }
 
+    // Stránkování komponentů
+    // Vybere to odpověď jako parametr, které obsahuje informace stránkování z odpovědi serveru
     function buildPagination(response) {
         const pagination = $('#pagination');
         pagination.empty();
@@ -223,7 +223,7 @@ $(document).ready(function() {
             `);
         }
 
-        // Page numbers
+        // Čísla stránek
         const startPage = Math.max(1, response.page - 2);
         const endPage = Math.min(response.totalPages, response.page + 2);
 
@@ -236,7 +236,7 @@ $(document).ready(function() {
             `);
         }
 
-        // Next button
+        // Další tlačítka
         if (response.page < response.totalPages) {
             pagination.append(`
                 <li class="page-item">
@@ -248,6 +248,7 @@ $(document).ready(function() {
         }
     }
 
+    // Reset do původního stavu -> clear result
     function clearResults() {
         $('#mainSearchInput').val('');
         $('#searchType').val('all');
@@ -266,6 +267,7 @@ $(document).ready(function() {
         showAlert('Výsledky byly vymazány', 'success');
     }
 
+    // Loading state
     function setLoadingState(loading) {
         if (loading) {
             $('#mainSearchBtn').prop('disabled', true).html('<i class="bi bi-hourglass-split"></i> Hledám...');
@@ -291,7 +293,7 @@ $(document).ready(function() {
         $('#resultsTable').parent().show();
     }
 
-    // Export functions (removed whole database export)
+    // Export .csv
     function exportCurrentPage(results, page) {
         if (results.length === 0) {
             showAlert('Žádné výsledky k exportu', 'warning');
@@ -304,6 +306,7 @@ $(document).ready(function() {
         showAlert(`Stránka ${page} byla exportována`, 'success');
     }
 
+    // Export .csv
     function exportAllResults() {
         const searchTerm = $('#mainSearchInput').val().trim();
         if (!searchTerm) {
@@ -317,7 +320,7 @@ $(document).ready(function() {
             search: searchTerm,
             searchType: $('#searchType').val() || 'all',
             page: 1,
-            perPage: 10000 // Reasonable limit for search results
+            perPage: 10000
         })
             .done(function(response) {
                 if (response.success) {

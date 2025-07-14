@@ -1,11 +1,21 @@
 <?php
+// ===========================================================================================================
+// Koncový bod API pro vyhledávání poštovního pole
+// ===========================================================================================================
+// Tento koncový bod poskytuje funkčnost vyhledávání pro poštovní pole v ČR
+// podporuje stránkování, různé typy vyhledávání a vrací odpovědi v JSONu
+
+// Nastavit záhlaví odezvy pro JSON API s podporou CORS
 header("Content-Type: application/json");
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: GET, POST");
 header("Access-Control-Allow-Headers: Content-Type");
 
 try {
-    // Database connection with UTF-8 support
+    // ===========================================================================================================
+    // Připojení databáze
+    // ===========================================================================================================
+    // Nastavit připojení PDO s databází MySQL se správnou konfigurací
     $pdo = new PDO(
         "mysql:host=localhost;port=3306;dbname=my_user_app;charset=utf8mb4",
         "root", "admin",
@@ -17,7 +27,10 @@ try {
         ]
     );
 
-    // Parse request parameters
+    // ===========================================================================================================
+    // Zpracování a validace vstupu
+    // ===========================================================================================================
+    // Přečtěte si a dekódujte vstup JSON z těla požadavku
     $input = json_decode(file_get_contents('php://input'), true);
     $searchTerm = $input['search'] ?? '';
     $searchType = $input['searchType'] ?? 'all';
@@ -26,11 +39,16 @@ try {
 
     $offset = ($page - 1) * $perPage;
 
-    // Build SQL query based on search type
-    $sql = "SELECT psc, adresa FROM postboxes WHERE adresa != '' AND adresa IS NOT NULL";
+    // ===========================================================================================================
+    // Tvorba sql queries
+    // ===========================================================================================================
+    // Základní dotazy - Vybere data a počítá záznamy z tabulky poštovních schránek
+    // odfiltrujte prázdné adresy, pro zajištění kvality dat
+    $sql = "SELECT id, psc, adresa FROM postboxes WHERE adresa != '' AND adresa IS NOT NULL";
     $countSql = "SELECT COUNT(*) FROM postboxes WHERE adresa != '' AND adresa IS NOT NULL";
-    $params = [];
+    $params = []; // Array na uložení query parametrů
 
+    // Přidání search parametrů na základě hledání
     if (!empty($searchTerm)) {
         switch ($searchType) {
             case 'psc':
@@ -52,7 +70,10 @@ try {
 
     $sql .= " ORDER BY psc ASC LIMIT :limit OFFSET :offset";
 
-    // Execute count query first
+    // ===========================================================================================================
+    // Spuštění dotazů počítání
+    // ===========================================================================================================
+    // Nejprve získá celkový počet odpovídajících záznamů pro stránkování
     $countStmt = $pdo->prepare($countSql);
     foreach ($params as $key => $value) {
         $countStmt->bindValue($key, $value);
@@ -62,7 +83,10 @@ try {
 
     $totalPages = ceil($totalCount / $perPage);
 
-    // Execute data query
+    // ===========================================================================================================
+    // Spuštění dotazů na main query
+    // ===========================================================================================================
+    // Příprava a execute main query pro získání stránkovaných výsledků
     $stmt = $pdo->prepare($sql);
     foreach ($params as $key => $value) {
         $stmt->bindValue($key, $value);
@@ -73,7 +97,10 @@ try {
     $stmt->execute();
     $postboxes = $stmt->fetchAll();
 
-    // Return JSON response
+    // ===========================================================================================================
+    // Succes
+    // ===========================================================================================================
+    // Vrácení čitelné JSON odpovědi s daty a metadaty
     echo json_encode([
         "success" => true,
         "data" => $postboxes,
@@ -85,6 +112,11 @@ try {
         "searchType" => $searchType,
         "searchTerm" => $searchTerm
     ]);
+
+    // ===========================================================================================================
+    // Error handling
+    // ===========================================================================================================
+    // Database-specific errorů / dalších errorů (od connection, query až po JSON, validace, etc.)
 
 } catch (PDOException $e) {
     http_response_code(500);

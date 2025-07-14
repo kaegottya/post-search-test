@@ -1,12 +1,11 @@
-// Map module for handling map modal functionality
+// Modul pro zobrazení mapy
 $(document).ready(function() {
     console.log('🗺️ Map module loaded');
 
-    // Initialize map modal events
     initializeMapModal();
 
     function initializeMapModal() {
-        // Handle map button clicks
+        // Tohle řeší klikání na mapu
         $(document).on('click', '.map-btn', function() {
             const address = $(this).data('address');
             const psc = $(this).data('psc');
@@ -14,7 +13,7 @@ $(document).ready(function() {
             showMapModal(address, psc);
         });
 
-        // External map buttons
+        // Ext. buttons (Google maps, Mapy.cz. Jdou přidat i další tlačítka, ale pak se kompletně rozhodí stylizace. Doporučuju spíš měnit, co je tam aktuálně)
         $('#openGoogleMapsBtn').click(function() {
             if (window.mapModule && window.mapModule.currentGoogleQuery) {
                 const googleUrl = `https://www.google.com/maps/search/?api=1&query=${window.mapModule.currentGoogleQuery}`;
@@ -31,7 +30,7 @@ $(document).ready(function() {
             }
         });
 
-        // Clear modal when closed
+        // Tohle vyčistí "cache" aby se pak ta mapa načetla správně při kliknutí na jinej button
         $('#mapModal').on('hidden.bs.modal', function() {
             if (window.mapModule && window.mapModule.currentMap) {
                 window.mapModule.currentMap.remove();
@@ -47,7 +46,6 @@ $(document).ready(function() {
     }
 });
 
-// Global map module object
 window.mapModule = {
     currentFullAddress: '',
     currentGoogleQuery: '',
@@ -64,7 +62,7 @@ function showMapModal(address, psc) {
 
     $('#mapAddressTitle').text(`${psc} - ${address}`);
 
-    // Create map container
+    // Vytvoří container pro mapu + styling
     $('#mapContainer').html(`
         <div id="leafletMap" style="height: 100%; width: 100%; position: relative;">
             <div class="map-loading d-flex align-items-center justify-content-center h-100">
@@ -86,7 +84,7 @@ function showMapModal(address, psc) {
 
     $('#mapModal').modal('show');
 
-    // Initialize map after modal is shown
+    // Inicializace mapy po načtení
     setTimeout(() => {
         initializeLeafletMap(address, psc);
     }, 300);
@@ -95,28 +93,24 @@ function showMapModal(address, psc) {
 function initializeLeafletMap(address, psc) {
     console.log('🗺️ Initializing Leaflet map for:', address);
 
-    // Clear loading state
     $('#leafletMap .map-loading').remove();
 
-    // Initialize map centered on Czech Republic
     const map = L.map('leafletMap').setView([49.7439, 15.3381], 7);
 
-    // Add OpenStreetMap tiles
+
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '© OpenStreetMap contributors'
     }).addTo(map);
 
-    // Store map reference
     window.mapModule.currentMap = map;
 
-    // Try to geocode only the address
     geocodeAddress(address, psc, map);
 }
 
 function geocodeAddress(address, psc, map) {
     console.log('🔍 Geocoding address:', address);
 
-    // Create search queries focusing on the address
+    // Vyhledávací querries pro adresu
     const queries = [
         `${address}, Czech Republic`,
         `${address}, Czechia`,
@@ -156,7 +150,7 @@ function tryGeocoding(queries, index, map, address, psc) {
             console.log(`📍 Geocoding response for query ${index + 1}:`, data);
 
             if (data && data.length > 0) {
-                // Find the best match based on the address
+                // Najde nejlepší shodu na základě adresy. Protože PSČ v .csv je špatně (problém český pošty), adresa se bere pro mapu z sloupce pro adresu.
                 const bestMatch = findBestAddressMatch(data, address);
 
                 if (bestMatch) {
@@ -171,7 +165,7 @@ function tryGeocoding(queries, index, map, address, psc) {
                 }
             }
 
-            // If this attempt failed, try the next query
+            // Fallback když selže hledání
             setTimeout(() => {
                 tryGeocoding(queries, index + 1, map, address, psc);
             }, 1000);
@@ -179,7 +173,7 @@ function tryGeocoding(queries, index, map, address, psc) {
         .catch(error => {
             console.error(`❌ Geocoding error for query ${index + 1}:`, error);
 
-            // Try next query after a delay
+
             setTimeout(() => {
                 tryGeocoding(queries, index + 1, map, address, psc);
             }, 1000);
@@ -189,38 +183,32 @@ function tryGeocoding(queries, index, map, address, psc) {
 function findBestAddressMatch(results, address) {
     console.log('🎯 Finding best address match from results:', results);
 
-    // Score each result based on address relevance
+    // Skóre podle relevance (všechno přidává body do finální hodnoty podle který se vybere ta nejbližší možná hodnota)
     const scoredResults = results.map(result => {
         let score = 0;
         const displayName = result.display_name.toLowerCase();
         const addressLower = address.toLowerCase();
 
-        // Split address into parts for better matching
         const addressParts = addressLower.split(/[\s,]+/).filter(part => part.length > 1);
 
-        // Check if address parts match
         addressParts.forEach(part => {
             if (displayName.includes(part)) {
                 score += 20;
             }
         });
 
-        // Prefer more specific results (street level)
         if (result.class === 'highway' || result.class === 'place') {
             score += 15;
         }
 
-        // Prefer results with house numbers
         if (result.address && result.address.house_number) {
             score += 25;
         }
 
-        // Prefer results with street names
         if (result.address && result.address.road) {
             score += 20;
         }
 
-        // Higher importance = better match
         if (result.importance) {
             score += result.importance * 10;
         }
@@ -228,7 +216,7 @@ function findBestAddressMatch(results, address) {
         return { ...result, score };
     });
 
-    // Sort by score descending
+    // Seřazení výsledků podle bodů
     scoredResults.sort((a, b) => b.score - a.score);
 
     console.log('🎯 Scored results:', scoredResults.map(r => ({
@@ -238,17 +226,17 @@ function findBestAddressMatch(results, address) {
         type: r.type
     })));
 
-    // Return best match if it has a reasonable score
+    // V praxi když nevychází úplná chujovina tak to vrátí hodnotu co to má zobrazit
     return scoredResults[0] && scoredResults[0].score > 10 ? scoredResults[0] : null;
 }
 
 function displayLocationOnMap(map, lat, lon, address, psc, geocodingResult) {
     console.log('🗺️ Displaying location on map:', lat, lon);
 
-    // Center map on found location
+    // Vycentrování na lokaci
     map.setView([lat, lon], 16);
 
-    // Add marker with detailed popup
+    // Přidání bodu na pozici ("špendlík")
     const marker = L.marker([lat, lon]).addTo(map);
 
     const popupContent = `
@@ -267,7 +255,7 @@ function displayLocationOnMap(map, lat, lon, address, psc, geocodingResult) {
 
     marker.bindPopup(popupContent).openPopup();
 
-    // Add circle around the location
+    // Kolečko okolo bodu
     L.circle([lat, lon], {
         color: '#28a745',
         fillColor: '#28a745',
@@ -275,7 +263,6 @@ function displayLocationOnMap(map, lat, lon, address, psc, geocodingResult) {
         radius: 50
     }).addTo(map);
 
-    // Add accuracy indicator if available
     if (geocodingResult.boundingbox) {
         const bounds = geocodingResult.boundingbox;
         const southwest = L.latLng(bounds[0], bounds[2]);
@@ -292,7 +279,7 @@ function displayLocationOnMap(map, lat, lon, address, psc, geocodingResult) {
 function showLocationNotFound(address, psc, map) {
     console.log('❌ Location not found for:', address);
 
-    // Default to center of Czech Republic
+    // Defaultně to je vycentrovaný na ČR když se nepodaří najít bod, který odpovídá. Děje se to hlavně u č.p., kde úplně není jak změnit vyhledávání (tried, failed) Externí mapy to řeší velmi dobře
     map.setView([49.7439, 15.3381], 7);
 
     const marker = L.marker([49.7439, 15.3381]).addTo(map);
@@ -315,7 +302,6 @@ function showLocationNotFound(address, psc, map) {
         </div>
     `).openPopup();
 
-    // Add a general area indicator
     L.circle([49.7439, 15.3381], {
         color: '#dc3545',
         fillColor: '#dc3545',
@@ -344,3 +330,5 @@ function escapeHtml(text) {
     div.textContent = text;
     return div.innerHTML;
 }
+
+// V týhle části mě neskutečně potahal Claude 4 Sonnet, měl jsem předtím funkční řešení, který ale přidáváním dalších věcí přestalo fungovat kvůli po-upu :)

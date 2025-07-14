@@ -1,7 +1,6 @@
--- Drop existing table if it exists
+
 DROP TABLE IF EXISTS postboxes;
 
--- Create table with 'adresa' column (not 'mesto')
 CREATE TABLE postboxes (
     id INT AUTO_INCREMENT PRIMARY KEY,
     psc VARCHAR(10) NOT NULL,

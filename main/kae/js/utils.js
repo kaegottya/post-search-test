@@ -2,7 +2,7 @@ $(document).ready(function() {
     console.log('🛠️ Utils module loaded');
 });
 
-// Display alert notifications to user
+// Zobrazení alertů
 function showAlert(message, type) {
     console.log(`🚨 Alert (${type}):`, message);
 
@@ -21,22 +21,23 @@ function showAlert(message, type) {
     }, 4000);
 }
 
-// Prevent XSS attacks by escaping HTML
+// Prevence XSS (Cross-Site Scriptů).
+// Přišlo mi to fajn sem dát, prvně jsem to tolik neřešil, ale i do budoucna se to hodí
 function escapeHtml(text) {
     const div = document.createElement('div');
     div.textContent = text;
     return div.innerHTML;
 }
 
-// Convert data to CSV format with UTF-8 BOM
+// Konverze dat na UTF-8 BOM
 function convertToCSV(data) {
     const BOM = '\uFEFF';
-    const header = 'PSC;Adresa\n';
+    const header = 'ID;PSC;Adresa\n';
     const rows = data.map(item => `"${item.psc}";"${item.adresa}"`).join('\n');
     return BOM + header + rows;
 }
 
-// Trigger file download in browser
+// Trigger na stahování dat
 function downloadFile(content, filename, contentType) {
     const blob = new Blob([content], { type: contentType + ';charset=utf-8;' });
     const url = window.URL.createObjectURL(blob);
@@ -49,7 +50,7 @@ function downloadFile(content, filename, contentType) {
     window.URL.revokeObjectURL(url);
 }
 
-// Make AJAX request to search API with timeout handling
+// AJAX request, který bere data z poštovních schránek z PHP backendu
 function makeSearchRequest(requestData) {
     console.log('📡 Making API request:', requestData);
 
@@ -64,7 +65,7 @@ function makeSearchRequest(requestData) {
     });
 }
 
-// Enable smooth scrolling for anchor links
+// Smooth scrolling
 function initializeSmoothScrolling() {
     $('a[href^="#"]').on('click', function(event) {
         var target = $(this.getAttribute('href'));
