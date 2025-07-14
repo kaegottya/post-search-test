@@ -466,15 +466,6 @@ body {
     }
 }
 
-/* Add subtle animation to footer content */
-.footer .container > .row > div {
-    animation: fadeInUp 0.8s ease-out;
-}
-
-.footer .container > .row:nth-child(2) > div {
-    animation-delay: 0.2s;
-}
-
 @keyframes fadeInUp {
     from {
         opacity: 0;

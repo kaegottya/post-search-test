@@ -5,6 +5,7 @@ header("Access-Control-Allow-Methods: GET, POST");
 header("Access-Control-Allow-Headers: Content-Type");
 
 try {
+    // Database connection with UTF-8 support
     $pdo = new PDO(
         "mysql:host=localhost;port=3306;dbname=my_user_app;charset=utf8mb4",
         "root", "admin",
@@ -16,22 +17,20 @@ try {
         ]
     );
 
-    // Get request data
+    // Parse request parameters
     $input = json_decode(file_get_contents('php://input'), true);
     $searchTerm = $input['search'] ?? '';
     $searchType = $input['searchType'] ?? 'all';
     $page = max(1, intval($input['page'] ?? 1));
     $perPage = min(max(intval($input['perPage'] ?? 25), 1), 100);
 
-    // Calculate offset
     $offset = ($page - 1) * $perPage;
 
-    // Build base query
+    // Build SQL query based on search type
     $sql = "SELECT psc, adresa FROM postboxes WHERE adresa != '' AND adresa IS NOT NULL";
     $countSql = "SELECT COUNT(*) FROM postboxes WHERE adresa != '' AND adresa IS NOT NULL";
     $params = [];
 
-    // Add search conditions based on type
     if (!empty($searchTerm)) {
         switch ($searchType) {
             case 'psc':
@@ -51,10 +50,9 @@ try {
         $params[':search'] = '%' . $searchTerm . '%';
     }
 
-    // Add ordering and pagination
     $sql .= " ORDER BY psc ASC LIMIT :limit OFFSET :offset";
 
-    // Get total count first
+    // Execute count query first
     $countStmt = $pdo->prepare($countSql);
     foreach ($params as $key => $value) {
         $countStmt->bindValue($key, $value);
@@ -62,10 +60,9 @@ try {
     $countStmt->execute();
     $totalCount = $countStmt->fetchColumn();
 
-    // Calculate total pages
     $totalPages = ceil($totalCount / $perPage);
 
-    // Get data for current page
+    // Execute data query
     $stmt = $pdo->prepare($sql);
     foreach ($params as $key => $value) {
         $stmt->bindValue($key, $value);
@@ -76,7 +73,7 @@ try {
     $stmt->execute();
     $postboxes = $stmt->fetchAll();
 
-    // Return response
+    // Return JSON response
     echo json_encode([
         "success" => true,
         "data" => $postboxes,

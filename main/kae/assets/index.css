@@ -1,6 +1,6 @@
-/* Import fonts and setup variables */
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600&display=swap');
 
+/* CSS Variables for consistent theming */
 :root {
     --primary-color: #007bff;
     --secondary-color: #6c757d;
@@ -19,7 +19,7 @@
     --glass-border: rgba(255, 255, 255, 0.2);
 }
 
-/* Body with animated background */
+/* Body with animated gradient background */
 body {
     background: linear-gradient(-45deg, #f8f9fa, #e9ecef, #dee2e6, #ced4da);
     background-size: 400% 400%;
@@ -35,7 +35,7 @@ body {
     100% { background-position: 0% 50%; }
 }
 
-/* Floating particles for search page */
+/* Floating background particles */
 body::before {
     content: '';
     position: fixed;
@@ -49,7 +49,7 @@ body::before {
     z-index: -1;
 }
 
-/* Navigation enhancements */
+/* Navigation with glass effect */
 .navbar {
     backdrop-filter: blur(20px);
     background: rgba(33, 37, 41, 0.95) !important;
@@ -62,6 +62,7 @@ body::before {
     text-shadow: 0 0 10px rgba(0, 123, 255, 0.5);
 }
 
+/* Navigation link hover effects */
 .nav-link {
     position: relative;
     transition: all 0.3s ease;
@@ -84,7 +85,7 @@ body::before {
     width: 80%;
 }
 
-/* Search Hero Section */
+/* Hero search section with gradient */
 .search-hero {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
@@ -129,6 +130,7 @@ body::before {
     z-index: 2;
 }
 
+/* Hero content animations */
 .search-hero h1 {
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
     animation: fadeInUp 1s ease-out;
@@ -154,7 +156,7 @@ body::before {
     }
 }
 
-/* Main Search Bar */
+/* Main search bar styling */
 .main-search-wrapper {
     position: relative;
     margin-bottom: 2rem;
@@ -198,7 +200,7 @@ body::before {
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
 }
 
-/* Search Panel */
+/* Search panels with glassmorphism */
 .search-panel {
     background: var(--glass-bg);
     backdrop-filter: blur(10px);
@@ -206,10 +208,12 @@ body::before {
     border-radius: 20px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
     transition: all 0.3s ease;
+    position: static !important;
 }
 
 .search-panel:hover {
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1) !important;
+    transform: none !important;
 }
 
 .search-panel .card-header {
@@ -230,7 +234,7 @@ body::before {
     transform: rotate(180deg);
 }
 
-/* Results Panel */
+/* Results panel styling */
 .results-panel {
     background: var(--glass-bg);
     backdrop-filter: blur(10px);
@@ -238,10 +242,17 @@ body::before {
     border-radius: 20px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
     transition: all 0.3s ease;
+    position: static !important;
+    margin-top: 20px !important;
 }
 
 .results-panel:hover {
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1) !important;
+    transform: none !important;
+}
+
+.results-panel.hover-lift:hover {
+    transform: none !important;
 }
 
 .results-panel .card-header {
@@ -264,7 +275,7 @@ body::before {
     50% { transform: scale(1.05); }
 }
 
-/* Search Controls */
+/* Search controls styling */
 .search-controls {
     display: flex;
     gap: 0.5rem;
@@ -280,7 +291,7 @@ body::before {
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
 
-/* Form Controls */
+/* Form controls with enhanced styling */
 .form-control {
     border-radius: 10px;
     border: 2px solid transparent;
@@ -295,19 +306,27 @@ body::before {
 }
 
 .form-select {
-    border-radius: 10px;
-    border: 2px solid transparent;
-    background: rgba(255, 255, 255, 0.9);
-    transition: all 0.3s ease;
+    border: 2px solid #dee2e6 !important;
+    border-radius: 10px !important;
+    padding: 10px 15px !important;
+    font-size: 1rem !important;
+    transition: all 0.3s ease !important;
+    background-color: rgba(255, 255, 255, 0.9) !important;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05) !important;
 }
 
 .form-select:focus {
-    border-color: var(--intellij-blue);
-    box-shadow: 0 0 0 0.2rem rgba(74, 144, 226, 0.25);
-    background: white;
+    border-color: var(--intellij-blue) !important;
+    box-shadow: 0 0 0 0.2rem rgba(74, 144, 226, 0.25) !important;
+    outline: none !important;
+    background-color: white !important;
 }
 
-/* Button Enhancements */
+.form-select:hover {
+    border-color: #adb5bd !important;
+}
+
+/* Button enhancements */
 .btn {
     border-radius: 50px;
     font-weight: 500;
@@ -348,7 +367,7 @@ body::before {
     background: linear-gradient(135deg, var(--intellij-purple), var(--intellij-blue));
 }
 
-/* Table Enhancements */
+/* Table styling */
 .table {
     background: transparent;
 }
@@ -363,13 +382,24 @@ body::before {
     font-weight: 600;
 }
 
+/* Disable table hover effects */
 .table-hover tbody tr:hover {
-    background: rgba(74, 144, 226, 0.1);
-    transform: scale(1.02);
-    transition: all 0.3s ease;
+    background: transparent !important;
+    transform: none !important;
+    transition: none !important;
 }
 
-/* Loading and Empty States */
+.table tbody tr:hover {
+    background: transparent !important;
+    transform: none !important;
+}
+
+.table td:hover {
+    background: transparent !important;
+    transform: none !important;
+}
+
+/* Loading and empty states */
 .loading-state {
     padding: 3rem;
     text-align: center;
@@ -391,7 +421,7 @@ body::before {
     opacity: 0.5;
 }
 
-/* Pagination */
+/* Pagination styling */
 .pagination {
     --bs-pagination-border-radius: 50px;
 }
@@ -415,7 +445,7 @@ body::before {
     border: none;
 }
 
-/* Modal Enhancements */
+/* Modal enhancements */
 .modal-content {
     border-radius: 20px;
     border: none;
@@ -472,6 +502,7 @@ body::before {
     line-height: 1.6;
 }
 
+/* Footer link animations */
 .footer a {
     color: #3498db;
     text-decoration: none;
@@ -525,7 +556,7 @@ body::before {
     font-size: 1.2em;
 }
 
-/* Responsive Design */
+/* Responsive design */
 @media (max-width: 768px) {
     .search-hero {
         padding: 40px 0;
@@ -567,59 +598,5 @@ body::before {
 }
 
 ::-webkit-scrollbar-thumb {
-    background: linear-gradient(45deg, var(--intellij-blue), var(--intellij-purple));
-    border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(45deg, var(--intellij-purple), var(--intellij-blue));
-}
-
-/* Animations */
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
-
-@keyframes slideIn {
-    from { transform: translateX(-100%); }
-    to { transform: translateX(0); }
-}
-
-@keyframes bounceIn {
-    from {
-        opacity: 0;
-        transform: scale(0.3);
-    }
-    50% {
-        opacity: 1;
-        transform: scale(1.05);
-    }
-    to {
-        opacity: 1;
-        transform: scale(1);
-    }
-}
-
-/* Utility classes */
-.glass-effect {
-    background: var(--glass-bg);
-    backdrop-filter: blur(10px);
-    border: 1px solid var(--glass-border);
-}
-
-.hover-lift {
-    transition: all 0.3s ease;
-}
-
-.hover-lift:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-}
-
-.gradient-text {
-    background: linear-gradient(135deg, var(--intellij-blue), var(--intellij-purple));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    background: linear-gradient(45deg, var(--intellij-blue), var)
 }

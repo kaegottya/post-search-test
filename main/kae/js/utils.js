@@ -1,9 +1,8 @@
-// Shared utility functions
 $(document).ready(function() {
     console.log('🛠️ Utils module loaded');
 });
 
-// Alert system
+// Display alert notifications to user
 function showAlert(message, type) {
     console.log(`🚨 Alert (${type}):`, message);
 
@@ -22,21 +21,22 @@ function showAlert(message, type) {
     }, 4000);
 }
 
-// HTML escape function
+// Prevent XSS attacks by escaping HTML
 function escapeHtml(text) {
     const div = document.createElement('div');
     div.textContent = text;
     return div.innerHTML;
 }
 
-// Export functions
+// Convert data to CSV format with UTF-8 BOM
 function convertToCSV(data) {
-    const BOM = '\uFEFF'; // BOM for proper UTF-8 encoding in Excel
+    const BOM = '\uFEFF';
     const header = 'PSC;Adresa\n';
     const rows = data.map(item => `"${item.psc}";"${item.adresa}"`).join('\n');
     return BOM + header + rows;
 }
 
+// Trigger file download in browser
 function downloadFile(content, filename, contentType) {
     const blob = new Blob([content], { type: contentType + ';charset=utf-8;' });
     const url = window.URL.createObjectURL(blob);
@@ -49,12 +49,11 @@ function downloadFile(content, filename, contentType) {
     window.URL.revokeObjectURL(url);
 }
 
-// API helper with extended timeout for large datasets
+// Make AJAX request to search API with timeout handling
 function makeSearchRequest(requestData) {
     console.log('📡 Making API request:', requestData);
 
-    // Extended timeout for large dataset exports
-    const timeout = requestData.perPage > 1000 ? 120000 : 30000; // 2 minutes for large requests
+    const timeout = requestData.perPage > 1000 ? 120000 : 30000;
 
     return $.ajax({
         url: '../php/get_postboxes.php',
@@ -65,7 +64,7 @@ function makeSearchRequest(requestData) {
     });
 }
 
-// Smooth scrolling for anchor links
+// Enable smooth scrolling for anchor links
 function initializeSmoothScrolling() {
     $('a[href^="#"]').on('click', function(event) {
         var target = $(this.getAttribute('href'));

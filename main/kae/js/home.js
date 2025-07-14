@@ -1,23 +1,18 @@
 $(document).ready(function() {
     console.log('🏠 Home module loaded');
 
-    // Initialize home page functionality
     initializeHomePage();
 
     function initializeHomePage() {
-        // Load statistics
         loadStatistics();
-
-        // Initialize smooth scrolling
         initializeSmoothScrolling();
-
         console.log('✅ Home page initialization complete');
     }
 
+    // Load postbox count statistics from API
     function loadStatistics() {
         console.log('📊 Loading statistics...');
 
-        // Get total count of postboxes
         makeSearchRequest({
             search: '',
             searchType: 'all',
