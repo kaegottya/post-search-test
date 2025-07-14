@@ -31,6 +31,14 @@ $(document).ready(function() {
             }
         });
 
+        $('#openOsmBtn').click(function() {
+            if (window.mapModule && window.mapModule.currentOsmQuery) {
+                const osmUrl = `https://www.openstreetmap.org/search?query=${window.mapModule.currentOsmQuery}`;
+                console.log('🌐 Opening OpenStreetMap:', osmUrl);
+                window.open(osmUrl, '_blank');
+            }
+        });
+
         // Clear modal when closed
         $('#mapModal').on('hidden.bs.modal', function() {
             $('#mapContainer').html('');
@@ -38,6 +46,7 @@ $(document).ready(function() {
                 window.mapModule.currentFullAddress = '';
                 window.mapModule.currentGoogleQuery = '';
                 window.mapModule.currentMapyCzQuery = '';
+                window.mapModule.currentOsmQuery = '';
             }
         });
     }
@@ -47,7 +56,8 @@ $(document).ready(function() {
 window.mapModule = {
     currentFullAddress: '',
     currentGoogleQuery: '',
-    currentMapyCzQuery: ''
+    currentMapyCzQuery: '',
+    currentOsmQuery: ''
 };
 
 function showMapModal(address, psc) {
@@ -56,35 +66,53 @@ function showMapModal(address, psc) {
     window.mapModule.currentFullAddress = `${address}, ${psc}, Czech Republic`;
     window.mapModule.currentGoogleQuery = encodeURIComponent(window.mapModule.currentFullAddress);
     window.mapModule.currentMapyCzQuery = encodeURIComponent(`${address}, ${psc}`);
+    window.mapModule.currentOsmQuery = encodeURIComponent(window.mapModule.currentFullAddress);
 
     $('#mapAddressTitle').text(`${psc} - ${address}`);
 
-    // Create OpenStreetMap iframe (no API key needed)
-    const osmQuery = encodeURIComponent(`${address}, ${psc}, Czech Republic`);
-    const osmUrl = `https://www.openstreetmap.org/search?query=${osmQuery}`;
-
+    // Show address bar and instruction for opening map
     $('#mapContainer').html(`
-        <div class="position-relative h-100">
-            <iframe 
-                src="${osmUrl}" 
-                width="100%" 
-                height="100%" 
-                style="border:0;" 
-                allowfullscreen="" 
-                loading="lazy">
-            </iframe>
-            <div class="position-absolute top-0 start-0 m-3">
-                <div class="bg-white rounded p-2 shadow-sm">
-                    <h6 class="mb-0">
-                        <i class="bi bi-geo-alt text-primary me-2"></i>
-                        ${escapeHtml(psc)} - ${escapeHtml(address)}
-                    </h6>
+        <div class="d-flex align-items-center justify-content-center h-100 bg-light">
+            <div class="text-center">
+                <div class="mb-4">
+                    <i class="bi bi-geo-alt display-1 text-primary"></i>
+                </div>
+                <h3 class="mb-3">${escapeHtml(psc)} - ${escapeHtml(address)}</h3>
+                <div class="alert alert-info">
+                    <i class="bi bi-info-circle me-2"></i>
+                    Použijte tlačítka níže pro otevření mapy v novém okně
+                </div>
+                <div class="address-bar bg-white p-3 rounded border mt-3">
+                    <div class="input-group">
+                        <span class="input-group-text">
+                            <i class="bi bi-geo-alt"></i>
+                        </span>
+                        <input type="text" class="form-control" value="${escapeHtml(window.mapModule.currentFullAddress)}" readonly>
+                        <button class="btn btn-outline-secondary" type="button" onclick="copyToClipboard('${escapeHtml(window.mapModule.currentFullAddress)}')">
+                            <i class="bi bi-clipboard"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
     `);
 
     $('#mapModal').modal('show');
+}
+
+function copyToClipboard(text) {
+    navigator.clipboard.writeText(text).then(function() {
+        showAlert('Adresa zkopírována do schránky', 'success');
+    }).catch(function() {
+        // Fallback for older browsers
+        const textArea = document.createElement('textarea');
+        textArea.value = text;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+        showAlert('Adresa zkopírována do schránky', 'success');
+    });
 }
 
 function escapeHtml(text) {

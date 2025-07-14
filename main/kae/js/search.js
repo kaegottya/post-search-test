@@ -77,10 +77,9 @@ $(document).ready(function() {
             }
         });
 
-        // Export buttons
+        // Export buttons (removed whole database export)
         $('#exportCurrentPage').click(() => exportCurrentPage(currentResults, currentPage));
         $('#exportAllResults').click(() => exportAllResults());
-        $('#exportWholeDatabase').click(() => exportWholeDatabase());
 
         // Keyboard shortcuts
         $(document).on('keydown', function(e) {
@@ -292,7 +291,7 @@ $(document).ready(function() {
         $('#resultsTable').parent().show();
     }
 
-    // Export functions
+    // Export functions (removed whole database export)
     function exportCurrentPage(results, page) {
         if (results.length === 0) {
             showAlert('Žádné výsledky k exportu', 'warning');
@@ -318,7 +317,7 @@ $(document).ready(function() {
             search: searchTerm,
             searchType: $('#searchType').val() || 'all',
             page: 1,
-            perPage: 100000 // Large number for all results
+            perPage: 10000 // Reasonable limit for search results
         })
             .done(function(response) {
                 if (response.success) {
@@ -332,67 +331,5 @@ $(document).ready(function() {
             .fail(function() {
                 showAlert('Chyba při exportu všech výsledků', 'danger');
             });
-    }
-
-    function exportWholeDatabase() {
-        showAlert('Exportuji celou databázi...', 'info');
-
-        // Try to export with batching for large datasets
-        exportDatabaseBatched();
-    }
-
-    function exportDatabaseBatched() {
-        let allData = [];
-        let currentBatch = 1;
-        const batchSize = 10000; // Process in batches of 10,000
-
-        function fetchBatch(page) {
-            console.log(`📦 Fetching batch ${page} (${batchSize} records)`);
-
-            return makeSearchRequest({
-                search: '',
-                searchType: 'all',
-                page: page,
-                perPage: batchSize
-            });
-        }
-
-        function processBatch(page) {
-            fetchBatch(page)
-                .done(function(response) {
-                    if (response.success && response.data.length > 0) {
-                        allData = allData.concat(response.data);
-                        console.log(`✅ Batch ${page} loaded: ${response.data.length} records (Total: ${allData.length})`);
-
-                        // If we got a full batch, there might be more
-                        if (response.data.length === batchSize) {
-                            processBatch(page + 1);
-                        } else {
-                            // Final batch or no more data
-                            finishExport();
-                        }
-                    } else {
-                        // No more data or error
-                        finishExport();
-                    }
-                })
-                .fail(function() {
-                    console.error(`❌ Failed to fetch batch ${page}`);
-                    finishExport();
-                });
-        }
-
-        function finishExport() {
-            if (allData.length > 0) {
-                const csv = convertToCSV(allData);
-                downloadFile(csv, 'postovni_schranky_cela_databaze.csv', 'text/csv');
-                showAlert(`Exportováno ${allData.length} záznamů z celé databáze`, 'success');
-            } else {
-                showAlert('Chyba při exportu celé databáze', 'danger');
-            }
-        }
-
-        // Start the batching process
-        processBatch(1);
     }
 });

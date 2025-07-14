@@ -137,10 +137,6 @@
                                         <li><a class="dropdown-item" href="#" id="exportAllResults">
                                             <i class="bi bi-file-earmark-spreadsheet me-2"></i>Všechny výsledky (CSV)
                                         </a></li>
-                                        <li><hr class="dropdown-divider"></li>
-                                        <li><a class="dropdown-item" href="#" id="exportWholeDatabase">
-                                            <i class="bi bi-database me-2"></i>Celá databáze (CSV)
-                                        </a></li>
                                     </ul>
                                 </div>
                             </div>
@@ -200,9 +196,9 @@
     </div>
 </div>
 
-<!-- Enhanced Map Modal -->
+<!-- Simplified Map Modal -->
 <div class="modal fade" id="mapModal" tabindex="-1" aria-labelledby="mapModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-xl">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="mapModalLabel">
@@ -211,9 +207,9 @@
                 </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body p-0">
-                <div id="mapContainer" style="height: 500px; position: relative;">
-                    <!-- Map will be loaded here -->
+            <div class="modal-body">
+                <div id="mapContainer" style="height: 400px; position: relative;">
+                    <!-- Address display will be loaded here -->
                 </div>
             </div>
             <div class="modal-footer">
@@ -225,6 +221,9 @@
                 </button>
                 <button type="button" class="btn btn-primary" id="openMapyCzBtn">
                     <i class="bi bi-map"></i> Mapy.cz
+                </button>
+                <button type="button" class="btn btn-info" id="openOsmBtn">
+                    <i class="bi bi-globe"></i> OpenStreetMap
                 </button>
             </div>
         </div>
