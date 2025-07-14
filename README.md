@@ -25,7 +25,7 @@ Webová aplikace pro vyhledávání poštovních schránek v České republice s
 1. **Klonování repozitáře**
    ```bash
    git clone [repository-url]
-   cd postovni-schranky
+   cd post-search-test
    ```
 
 2. **Nastavení databáze**
