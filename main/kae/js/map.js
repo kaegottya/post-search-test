@@ -74,7 +74,7 @@ function showMapModal(address, psc) {
                 </div>
             </div>
         </div>
-        <div class="position-absolute top-0 start-0 m-3 bg-white rounded p-2 shadow-sm" style="z-index: 1000;">
+        <div class="position-absolute top-0 start-0 m-3 rounded p-2 shadow-sm map-overlay-bg" style="z-index: 1000;">
             <h6 class="mb-0">
                 <i class="bi bi-geo-alt text-primary me-2"></i>
                 ${escapeHtml(psc)} - ${escapeHtml(address)}

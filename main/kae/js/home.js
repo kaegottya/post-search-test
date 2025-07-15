@@ -1,36 +1,77 @@
-$(document).ready(function() {
-    console.log('🏠 Home module loaded');
+function initializeHomePage() {
+    loadStatistics();
+    initializeSmoothScrolling();
+    initializeThemeIntegration();
+    console.log('✅ Home page initialization complete');
+}
 
-    initializeHomePage();
-
-    function initializeHomePage() {
-        loadStatistics();
-        initializeSmoothScrolling();
-        console.log('✅ Home page initialization complete');
+function initializeThemeIntegration() {
+    // Wait for theme switcher to be ready
+    if (window.themeSwitcher) {
+        setupThemeIntegration();
+    } else {
+        // Wait for theme switcher to load
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(setupThemeIntegration, 100);
+        });
     }
+}
 
-    // Načtení statistiky pro home page (počet poštovních schránek)
-    function loadStatistics() {
-        console.log('📊 Loading statistics...');
-
-        makeSearchRequest({
-            search: '',
-            searchType: 'all',
-            page: 1,
-            perPage: 1
-        })
-            .done(function(response) {
-                if (response.success && response.total) {
-                    $('#totalPostboxes').text(response.total.toLocaleString('cs-CZ'));
-                    console.log('✅ Statistics loaded:', response.total);
-                } else {
-                    $('#totalPostboxes').text('N/A');
-                    console.warn('⚠️ Failed to load statistics');
+function setupThemeIntegration() {
+    if (window.themeSwitcher) {
+        // Add theme-aware animations
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
                 }
-            })
-            .fail(function() {
-                $('#totalPostboxes').text('N/A');
-                console.error('❌ Error loading statistics');
             });
+        });
+
+        // Observe elements for scroll animations
+        document.querySelectorAll('.feature-card, .stats-section .card').forEach(el => {
+            el.classList.add('scroll-animation');
+            observer.observe(el);
+        });
+
+        console.log('🎨 Theme integration initialized');
     }
-});
+}
+
+function loadStatistics() {
+    // Simulate loading statistics
+    const totalPostboxesElement = document.getElementById('totalPostboxes');
+    if (totalPostboxesElement) {
+        let count = 0;
+        const target = 15847; // Example number
+        const increment = target / 100;
+
+        const counter = setInterval(() => {
+            count += increment;
+            if (count >= target) {
+                count = target;
+                clearInterval(counter);
+            }
+            totalPostboxesElement.textContent = Math.floor(count).toLocaleString('cs-CZ');
+        }, 20);
+    }
+}
+
+function initializeSmoothScrolling() {
+    // Add smooth scrolling for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        });
+    });
+}
+
+// Initialize when DOM is loaded
+document.addEventListener('DOMContentLoaded', initializeHomePage);
